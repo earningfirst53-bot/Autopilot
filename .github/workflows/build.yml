@@ -1,0 +1,29 @@
+name: AutoPilot APK CI
+on:
+  push:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '17' }
+      - uses: gradle/actions/setup-gradle@v3
+        with: { gradle-version: '8.7' }
+      - name: Build debug APK
+        run: gradle :app:assembleDebug --stacktrace
+      - name: Repeat APK integrity checks
+        run: |
+          test -s app/build/outputs/apk/debug/app-debug.apk
+          sha256sum app/build/outputs/apk/debug/app-debug.apk
+          for i in $(seq 1 20); do
+            unzip -t app/build/outputs/apk/debug/app-debug.apk >/dev/null
+          done
+          echo "20/20 APK integrity checks passed"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AutoPilot-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
