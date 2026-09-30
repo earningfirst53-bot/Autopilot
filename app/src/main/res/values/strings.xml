@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">AutoPilot</string>
+    <string name="service_desc">Lets AutoPilot read the screen and tap or type on your behalf to run the automations you create, and lets its AI Copilot finish a task if something unexpected happens.</string>
+</resources>
